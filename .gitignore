@@ -1,3 +1,6 @@
+# Public artifacts
+public/*.js*
+
 # Logs
 logs
 *.log
