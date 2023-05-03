@@ -7,4 +7,5 @@ electron
 react
 @mui/material
 esbuild
+@electron-forge/cli
 ```
