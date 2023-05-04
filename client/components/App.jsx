@@ -1,5 +1,5 @@
 import React from "react";
-import FileInput from "./FileInput";
+import FolderInput from "./FolderInput";
 import { Grid, Typography } from "@mui/material";
 
 const { homedir, platform } = window.require("os")
@@ -12,8 +12,8 @@ const STARBOUND_FOLDER_DEFAULTS = {
 
 export default function App() {
   // certain things to put in here; top-to-bottom
-  // Starbound folder link (folder button?); should be prefilled based on OS
-  // project folder link (folder button?); should have an example
+  // (check) Starbound folder link (folder button?); should be prefilled based on OS
+  // (check) project folder link (folder button?); should have an example
   // build button on the same layer as a build-and-run button
   // terminal output
 
@@ -24,8 +24,8 @@ export default function App() {
             Starbound Mod Tester
           </Typography>
         </Grid>
-        <FileInput name="Starbound Folder" defaultValue={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
-        <FileInput name="Mod to Build" />
+        <FolderInput name="Starbound Folder" defaultValue={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
+        <FolderInput name="Mod to Build" />
     </Grid>
   )
 }

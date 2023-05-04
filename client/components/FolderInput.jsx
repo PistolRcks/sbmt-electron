@@ -5,13 +5,13 @@ import React, { useEffect, useState } from "react";
 const { ipcRenderer } = window.require("electron");
 
 /**
- * Renders a TextField with a file input button adornment at the end.
+ * Renders a TextField with a folder input button adornment at the end.
  * @prop name - The name of the input
  * @prop hint - The hint that displays at the bottom of the TextField (also called helperText)
  * @prop defaultValue - The default value of the TextField
  * @returns the component
  */
-export default function FileInput({ name, hint, defaultValue }) {
+export default function FolderInput({ name, hint, defaultValue }) {
   const [inputVal, setInputVal] = useState(defaultValue);
 
   const handleDirUpdate = (e, sentName, dirs) => {
@@ -40,14 +40,14 @@ export default function FileInput({ name, hint, defaultValue }) {
         InputProps={{
           endAdornment: (
             <InputAdornment>
-              <IconButton
-                color="primary"
-                component="label"
-                onClick={() => {
-                  // really gross hack because electron doesn't let you select directories
-                  ipcRenderer.send("select-dirs", name);
-                }}
-              >
+                <IconButton
+                  color="primary"
+                  component="label"
+                  onClick={() => {
+                    // really gross hack because electron doesn't let you select directories
+                    ipcRenderer.send("select-dirs", name);
+                  }}
+                >
                 <FolderOutlinedIcon />
               </IconButton>
             </InputAdornment>
