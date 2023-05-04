@@ -24,8 +24,8 @@ export default function App() {
             Starbound Mod Tester
           </Typography>
         </Grid>
-        <FileInput name="Starbound Folder" placeholder={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
-        <FileInput name="Mod to Build" placeholder="" hint="" />
+        <FileInput name="Starbound Folder" defaultValue={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
+        <FileInput name="Mod to Build" />
     </Grid>
   )
 }

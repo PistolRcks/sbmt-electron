@@ -8,11 +8,11 @@ const { ipcRenderer } = window.require("electron");
  * Renders a TextField with a file input button adornment at the end.
  * @prop name - The name of the input
  * @prop hint - The hint that displays at the bottom of the TextField (also called helperText)
- * @prop placeholder - The placeholder text which will be in the TextField
+ * @prop defaultValue - The default value of the TextField
  * @returns the component
  */
-export default function FileInput({ name, hint, placeholder }) {
-  const [inputVal, setInputVal] = useState("");
+export default function FileInput({ name, hint, defaultValue }) {
+  const [inputVal, setInputVal] = useState(defaultValue);
 
   const handleDirUpdate = (e, sentName, dirs) => {
     // make sure that we were the one sending this
@@ -34,7 +34,6 @@ export default function FileInput({ name, hint, placeholder }) {
         fullWidth
         label={name}
         helperText={hint}
-        placeholder={placeholder}
         value={inputVal}
         onChange={(e) => setInputVal(e.target.value)}
         variant="outlined"
