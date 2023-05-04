@@ -1,6 +1,6 @@
 import React from "react";
 import FolderInput from "./FolderInput";
-import { Grid, Typography } from "@mui/material";
+import { Button, Grid, Stack, Typography } from "@mui/material";
 
 const { homedir, platform } = window.require("os")
 
@@ -18,14 +18,21 @@ export default function App() {
   // terminal output
 
   return (
-    <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h3">
-            Starbound Mod Tester
-          </Typography>
-        </Grid>
-        <FolderInput name="Starbound Folder" defaultValue={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
-        <FolderInput name="Mod to Build" />
+    <Grid container spacing={2} justifyContent="center" alignItems="center">
+      <Grid item xs={12}>
+        <Typography variant="h3">
+          Starbound Mod Tester
+        </Typography>
+      </Grid>
+      <FolderInput name="Starbound Folder" defaultValue={STARBOUND_FOLDER_DEFAULTS[platform()]} hint="The location of the root of your Starbound folder" />
+      <FolderInput name="Mod to Build" />
+      {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. */}
+      <Grid item xs={12}>
+        <Stack direction="row" spacing={2}>
+          <Button variant="contained">Build and Run</Button>
+          <Button variant="outlined">Build</Button>
+        </Stack>
+      </Grid>
     </Grid>
   )
 }

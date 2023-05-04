@@ -29,7 +29,7 @@ app.on('window-all-closed', () => {
 })
 
 // really gross hack for selecting a directory because the `webkitdirectory` attribute doesn't work
-ipcMain.on('select-dirs', async (event, name) => {
+ipcMain.on('select-dirs', async (e, name) => {
   const result = await dialog.showOpenDialog(win, {
     properties: ['openDirectory']
   })
