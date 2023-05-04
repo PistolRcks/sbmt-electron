@@ -1,6 +1,7 @@
 import { Grid, TextField, IconButton, InputAdornment } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { DataContext } from "../DataContext";
 
 const { ipcRenderer } = window.require("electron");
 
@@ -8,11 +9,14 @@ const { ipcRenderer } = window.require("electron");
  * Renders a TextField with a folder input button adornment at the end.
  * @prop name - The name of the input
  * @prop hint - The hint that displays at the bottom of the TextField (also called helperText)
+ * @prop type - The type of the data in the TextField. Used for updating the context. Accepted values: {sbFolder, mod}
+ * @prop idx - The index of the mod. Useful only with `type === "mod"`.
  * @prop defaultValue - The default value of the TextField
  * @returns the component
  */
-export default function FolderInput({ name, hint, defaultValue }) {
+export default function FolderInput({ name, type, idx, hint, defaultValue }) {
   const [inputVal, setInputVal] = useState(defaultValue);
+  const { data, setData } = useContext(DataContext);
 
   const handleDirUpdate = (e, sentName, dirs) => {
     // make sure that we were the one sending this
@@ -21,6 +25,18 @@ export default function FolderInput({ name, hint, defaultValue }) {
     }
   };
 
+  // update context whenever the inputVal is updated
+  useEffect(() => {
+    if (type === "sbFolder") {
+      setData({ ...data, folderPath: inputVal });
+    } else if (type === "mod") {
+      let newData = data;
+      data["modPaths"][Number(idx)] = inputVal;
+      setData(newData);
+    }
+  }, [inputVal]);
+
+  // subscribe to the ipc update
   useEffect(() => {
     ipcRenderer.on("selected-dirs", handleDirUpdate);
     return () => {
@@ -40,14 +56,14 @@ export default function FolderInput({ name, hint, defaultValue }) {
         InputProps={{
           endAdornment: (
             <InputAdornment>
-                <IconButton
-                  color="primary"
-                  component="label"
-                  onClick={() => {
-                    // really gross hack because electron doesn't let you select directories
-                    ipcRenderer.send("select-dirs", name);
-                  }}
-                >
+              <IconButton
+                color="primary"
+                component="label"
+                onClick={() => {
+                  // really gross hack because electron doesn't let you select directories
+                  ipcRenderer.send("select-dirs", name);
+                }}
+              >
                 <FolderOutlinedIcon />
               </IconButton>
             </InputAdornment>

@@ -36,3 +36,7 @@ ipcMain.on('select-dirs', async (e, name) => {
   win.webContents.send("selected-dirs", name, result.filePaths)
   console.log('directories selected', result.filePaths)
 })
+
+ipcMain.on('build-and-run', async (e, sbFP, modFPs) => {
+  console.log("sbFP: " + sbFP + ", modFPs[0]: " + modFPs[0])
+})
