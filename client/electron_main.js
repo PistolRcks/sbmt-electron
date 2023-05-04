@@ -1,14 +1,14 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+const { app, BrowserWindow, dialog, ipcMain } = require("electron");
 
+let win;
 const createWindow = () => {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
       width: 800,
       height: 600,
       webPreferences: {
+        // holy shit this is so insecure
         nodeIntegration: true,
-        // preloads node variables into the frontend
-        preload: path.join(__dirname, "electron_preload.js")
+        contextIsolation: false,
       }
     })
   
@@ -26,4 +26,13 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
+})
+
+// really gross hack for selecting a directory because the `webkitdirectory` attribute doesn't work
+ipcMain.on('select-dirs', async (event, name) => {
+  const result = await dialog.showOpenDialog(win, {
+    properties: ['openDirectory']
+  })
+  win.webContents.send("selected-dirs", name, result.filePaths)
+  console.log('directories selected', result.filePaths)
 })
