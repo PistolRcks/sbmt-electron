@@ -24,11 +24,11 @@ export default function App() {
   const val = { data, setData };
 
   const buildAndRun = (e) => {
-    ipcRenderer.send("build-and-run", data.folderPath, data.modPaths);
+    ipcRenderer.send("build", data.folderPath, data.modPaths, true);
   };
 
   const build = (e) => {
-    return; 
+    ipcRenderer.send("build", data.folderPath, data.modPaths, false);
   }
 
   return (
@@ -45,7 +45,8 @@ export default function App() {
         />
         <FolderInput name="Mod to Build" type="mod" idx={0} />
       </DataContext.Provider>
-      {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. */}
+      {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. 
+          Also, it would be really fun to have a progressbar here, but I don't have time for that.*/}
       <Grid item xs={12}>
         <Stack direction="row" spacing={2}>
           <Button variant="contained" onClick={buildAndRun}>
