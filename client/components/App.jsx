@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FolderInput from "./FolderInput";
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { DataContext } from "../DataContext";
+import LoaderProgressBar from "./LoaderProgressBar";
 
 const { homedir, platform } = window.require("os");
 const { ipcRenderer } = window.require("electron");
@@ -16,20 +17,27 @@ export default function App() {
   // certain things to put in here; top-to-bottom
   // (check) Starbound folder link (folder button?); should be prefilled based on OS
   // (check) project folder link (folder button?); should have an example
-  // (check, now for functionality) build button on the same layer as a build-and-run button
-  // terminal output
+  // (check) build button on the same layer as a build-and-run button
+  // (not sure if this is possible?) terminal output
+
+  const [isPBHidden, setIsPBHidden] = useState(true);
 
   // use a State within a Context to get value state from the forms
-  const [data, setData] = useState({ folderPath: STARBOUND_FOLDER_DEFAULTS[platform()], modPaths: [] });
+  const [data, setData] = useState({
+    folderPath: STARBOUND_FOLDER_DEFAULTS[platform()],
+    modPaths: [],
+  });
   const val = { data, setData };
 
   const buildAndRun = (e) => {
     ipcRenderer.send("build", data.folderPath, data.modPaths, true);
+    setIsPBHidden(false);
   };
 
   const build = (e) => {
     ipcRenderer.send("build", data.folderPath, data.modPaths, false);
-  }
+    setIsPBHidden(false);
+  };
 
   return (
     <Grid container spacing={2} justifyContent="center" alignItems="center">
@@ -45,8 +53,10 @@ export default function App() {
         />
         <FolderInput name="Mod to Build" type="mod" idx={0} />
       </DataContext.Provider>
-      {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. 
-          Also, it would be really fun to have a progressbar here, but I don't have time for that.*/}
+      
+      { // Hide the progressbar when it's not needed
+      !isPBHidden && <LoaderProgressBar />}
+      {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. */} 
       <Grid item xs={12}>
         <Stack direction="row" spacing={2}>
           <Button variant="contained" onClick={buildAndRun}>

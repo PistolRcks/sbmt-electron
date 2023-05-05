@@ -4,8 +4,12 @@ const { readdirSync, rmSync } = require("fs");
 
 const slash = process.platform === "win32" ? "\\" : "/";
 
+// gross to be using globals, but whatever
+let loadingSteps = 0;
+let currentLoadingSteps = 0;
+let win;
+
 function main() {
-  let win;
   const createWindow = () => {
     win = new BrowserWindow({
       width: 800,
@@ -44,6 +48,10 @@ function main() {
 
   ipcMain.on("build", async (e, sbFP, modFPs, runAfter) => {
     //console.log("sbFP: " + sbFP + ", modFPs[0]: " + modFPs[0]);
+    // build mods + [load game + cleanup mods] + end = total number of steps
+    loadingSteps = modFPs.length + (runAfter ? 1 + modFPs.length : 0) + 1
+    currentLoadingSteps = 0
+
     buildAll(sbFP, modFPs, runAfter);
 
     // run the game if we wanna
@@ -58,6 +66,7 @@ function main() {
       }
 
       console.log("start : Running the game...")
+      win.webContents.send("loading-update", norm(++currentLoadingSteps), "start : Running the game...")
       execFile(file, [], {}, (err, stdout, stderr) => {
         // clean up temp files afterwards
         const modsFolder = sbFP + slash + "mods"
@@ -67,11 +76,22 @@ function main() {
             const modFP = modsFolder + slash + mod
             rmSync(modFP)
             console.log(`cleanup : Successfully cleaned up ${modFP}`)
+            win.webContents.send("loading-update", norm(++currentLoadingSteps), `cleanup : Successfully cleaned up ${modFP}`)
           }
         }
+        console.log(`finish : All done!`)
+        win.webContents.send("loading-update", norm(++currentLoadingSteps), `finish : All done!`)
       });
+    } else {
+
+    console.log(`finish : All done!`)
+    win.webContents.send("loading-update", norm(++currentLoadingSteps), `finish : All done!`)
     }
   });
+}
+
+function norm(currentStep) {
+  return currentStep / loadingSteps * 100
 }
 
 /**
@@ -86,6 +106,7 @@ function buildAll(sbFP, modFPs, sendToMods) {
     try {
       buildOne(sbFP, modFP, targetFP);
     } catch (e) {
+      win.webContents.send("loading-update", norm(++currentLoadingSteps), e.message)
       console.error(e.message);
     }
   }
@@ -128,6 +149,8 @@ function buildOne(sbFP, modFP, targetFP) {
   // format is `./asset_packer [mod_folder] [target_folder]`
   // must run in shell because of how we're handling odd file names; very unsanitized and insecure
   execFileSync(`"${packerFP}" "${modFP}" "${targetFP + slash + folderName + ".tmp.pak"}"`, [], {shell: true});
+
+  win.webContents.send("loading-update", norm(++currentLoadingSteps), `mod_build : ${modFP} : Successfully built`)
   console.log(`mod_build : ${modFP} : Successfully built`);
 }
 
