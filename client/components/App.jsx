@@ -53,7 +53,6 @@ export default function App() {
         />
         <FolderInput name="Mod to Build" type="mod" idx={0} />
       </DataContext.Provider>
-      
       { // Hide the progressbar when it's not needed
       !isPBHidden && <LoaderProgressBar />}
       {/* Can't figure out how to center this correctly, so guess what? I'm not gonna. */} 
