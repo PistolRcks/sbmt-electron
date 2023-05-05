@@ -22,6 +22,7 @@ function main() {
     });
 
     win.loadFile("public/index.html");
+    win.removeMenu()
   };
 
   app.whenReady().then(() => {
